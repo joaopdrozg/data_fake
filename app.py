@@ -34,8 +34,24 @@ def gerar_dados(area, qtd):
     elif area == 'RH':
         for _ in range(qtd):
            dados.append({
-               "Data": fake.date_this_year(),
-               "Produto": random.choice(['Camisa', 'Calça', 'Tênis', 'Boné', 'Jaqueta']),
-               "Valor": round(random.uniform(50,500),2),
-               "Pagamento":random.choice(["Cartão", "Dinheiro", "Pix"])
+               "Funcionário": fake.name(),
+               "Cargo": random.choice(['Analista', 'Coordenador', 'Gerente', 'Técnico']),
+               "Data Admissão": fake.date_between(start_date='-5y', end_date='today'),
+               "Salário": round(random.uniform(2000,10000),2)
            })
+    return pd.DataFrame(dados)
+
+df = gerar_dados(area, qtd)
+st.dataframe(df)
+
+def convert_df(df):
+    return df.to_csv(index=False).encode('utf-8')
+
+csv = convert_df(df)
+
+st.download_button(
+    label="Baixar CSV",
+    data=csv,
+    file_name=f'{area.lower()}_dados.csv',
+    mime='text/csv'
+    )
